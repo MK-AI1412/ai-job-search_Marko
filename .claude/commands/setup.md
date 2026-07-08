@@ -312,8 +312,9 @@ Ask about:
 - **Role titles to search for:** "What job titles should I search for? For example: Data Scientist, ML Engineer, Geophysicist." Collect 3-8 specific titles.
 - **Key skills as search terms:** "Which of your skills are most likely to appear in job postings?" Pick 3-5 that are distinctive and searchable.
 - **Target companies (optional):** "Are there specific companies you'd like to monitor for openings?"
-- **Geographic scope:** "Which cities or regions should I search in? How far are you willing to commute?" Use this to define the location filter tiers (ideal, acceptable, borderline, too far).
-- **Job portals:** "The framework includes tools for Danish job portals (Jobindex, Jobbank, Jobdanmark, Jobnet). Are these the right ones for you, or do you use other sites?" Note: if the user is outside Denmark, acknowledge that the built-in CLI tools are Denmark-specific and suggest they can add their own portal integrations or rely on LinkedIn/Google site-searches.
+- **Geographic scope:** "For Croatia and the Netherlands, which cities or regions should I search in? How far are you willing to commute or relocate?" Use this to define Croatia ideal/acceptable tiers, Netherlands ideal/acceptable tiers, and remote EU rules.
+- **Language and work authorization:** "Which posting languages are acceptable, and should I flag Dutch-only, Croatian-only, visa sponsorship, or contractor/tax setup issues?"
+- **Job portals:** "The active search config uses LinkedIn, Croatia/Netherlands job boards, remote boards, and relocation boards such as Relocate.me. Are there target companies or extra boards to add?"
 
 **Important:** Also suggest role types the user may not have considered, based on their skill profile. For example:
 - If they have strong Python + domain expertise: "Have you considered roles like 'Technical Consultant' or 'Solutions Engineer' in your domain?"
@@ -354,17 +355,19 @@ Create STAR examples from their actual experience (at least 3-4 examples). Path 
 ### 7. Update `cv/main_example.tex`
 Replace placeholder personal data with their actual name, contact info, and add their education and most recent experience entries.
 
-### 8. Generate `.claude/skills/job-scraper/search-queries.md`
+### 8. Generate scraper search queries
 Replace all placeholder tokens in the search queries file with the user's actual information from Section 9 (or the equivalent follow-up questions in Path A's Step A7):
 - Replace `[YOUR_PRIMARY_ROLE_TYPE]`, `[YOUR_PRIMARY_JOB_TITLE]`, etc. with actual role titles
 - Replace `[YOUR_KEY_SKILL]`, `[YOUR_DOMAIN_KEYWORD_1]`, etc. with actual skills and domain terms
-- Replace `[YOUR_CITY]`, `[YOUR_COUNTRY]`, `[YOUR_REGION]` with actual location
-- Fill in the location filter tiers (ideal, acceptable, borderline, too far) based on commute constraints
+- Replace `[CROATIA_IDEAL_CITIES]`, `[CROATIA_ACCEPTABLE_CITIES]`, `[NETHERLANDS_IDEAL_CITIES]`, and `[NETHERLANDS_ACCEPTABLE_REGIONS]` with actual location preferences
+- Fill in language, work authorization, relocation, remote-country eligibility, and remote EU filters based on the user's constraints
 - Organize queries into priority categories matching the user's career direction:
   - Priority 1: Their strongest/most desired role direction
   - Priority 2: Their domain expertise
   - Priority 3: Adjacent roles they could pivot into
   - Priority 4: Broader roles (wider net)
+
+Write the same search strategy to both `.claude/skills/job-scraper/search-queries.md` and `.agents/skills/job-scraper/search-queries.md` when both paths exist, so Claude and Codex stay aligned.
 
 ---
 
