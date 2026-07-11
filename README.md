@@ -49,21 +49,18 @@ The framework encodes career guidance best practices, including structured evalu
 ### 1. Fork and clone
 
 ```bash
-gh repo fork MadsLorentzen/ai-job-search --clone
-cd ai-job-search
+gh repo fork MK-AI1412/ai-job-search_Marko --clone
+cd ai-job-search_Marko
 ```
 
 ### 2. Install job search tools
 
 ```bash
-cd .agents/skills/jobbank-search/cli && bun install && cd ../../../..
-cd .agents/skills/jobdanmark-search/cli && bun install && cd ../../../..
-cd .agents/skills/jobindex-search/cli && bun install && cd ../../../..
-cd .agents/skills/jobnet-search/cli && bun install && cd ../../../..
+bun --version
 cd .agents/skills/linkedin-search/cli && bun install && cd ../../../..
 ```
 
-For `linkedin-search` the install is optional: it has zero runtime dependencies and runs with plain `bun`; `bun install` only pulls TypeScript dev types.
+For `linkedin-search` the install is optional: it has zero runtime dependencies and runs with plain `bun`; `bun install` only pulls TypeScript dev types. The Danish portal CLIs are kept as examples for `/add-portal`, but they are not required for the Croatia/Netherlands/remote-EU workflow.
 
 ### 3. Set up your profile
 
@@ -71,9 +68,20 @@ For `linkedin-search` the install is optional: it has zero runtime dependencies 
 claude
 # Then inside Claude Code:
 /setup
+/setup --section search
 ```
 
 `/setup` offers three paths: read your `documents/` folder if you have one populated (CV PDF, LinkedIn export, diplomas, reference letters, past applications), import a single CV pasted in chat, or walk through an interview. It auto-detects what you have and asks. Documents-folder mode is idempotent and safe to re-run as you add more material; see `documents/README.md` for the layout.
+
+Run `/setup --section search` before the first scrape so role titles, skills, languages, target cities, relocation rules, and contract deal-breakers replace the template placeholders.
+
+Optional CV-first path:
+
+```text
+Audit and improve this CV for my target roles: <attach or paste CV>
+```
+
+The assistant will review the CV, compare it with current CV/ATS guidance, generate an improved master CV, then use the accepted profile/search terms for scraping.
 
 ### 4. Search for jobs
 
@@ -81,7 +89,7 @@ claude
 /scrape
 ```
 
-This searches multiple job portals for positions matching your profile, deduplicates results, and presents them sorted by fit. Pick a match to run `/apply` on it directly — or, when a scrape returns more jobs than you want to eyeball, run `/rank` to batch-score them all against the fit framework and get a ranked shortlist first.
+This searches LinkedIn plus Croatia, Netherlands, remote-EU, relocation, and English-friendly portal queries. Results are normalized, deduplicated, filtered for language/contract/remote-country blockers, and sorted by fit. Pick a match to run `/apply` on it directly - or, when a scrape returns more jobs than you want to eyeball, run `/rank` to batch-score them all against the fit framework and get a ranked shortlist first.
 
 ### 5. Apply to a job
 
@@ -96,6 +104,14 @@ If the URL can't be fetched (some job portals block automated access), you can p
 ```
 
 This runs the full workflow: evaluate fit, draft CV + cover letter, review with a second agent, revise, and present the final output.
+
+### 6. Optional: plan skill gaps
+
+```bash
+/upskill
+```
+
+This compares your tracked jobs against your profile, identifies repeated skill gaps, and writes a prioritized learning plan.
 
 ## Other commands
 

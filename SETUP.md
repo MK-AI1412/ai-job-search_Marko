@@ -65,31 +65,28 @@ If `pdftotext` is missing, `/apply` skips the mechanical check with a warning an
 ## 2. Fork and clone
 
 ```bash
-gh repo fork MadsLorentzen/ai-job-search --clone
-cd ai-job-search
+gh repo fork MK-AI1412/ai-job-search_Marko --clone
+cd ai-job-search_Marko
 ```
 
 Or manually: fork on GitHub, then clone your fork.
 
 ## 3. Install job search CLI dependencies
-Run these from the repository root.
+Run these from the repository root. The active Croatia/Netherlands/remote-EU workflow needs Bun and the LinkedIn CLI. The Danish portal CLIs are kept as examples for `/add-portal`; install them only if you want to develop or test those examples.
 
 - PowerShell:
 
 ```powershell
-$tools = @("jobbank-search", "jobdanmark-search", "jobindex-search", "jobnet-search", "linkedin-search")
-foreach ($tool in $tools) {
-  Set-Location ".agents/skills/$tool/cli"
-  bun install
-  Set-Location "..\..\..\.."
-}
+bun --version
+Set-Location ".agents/skills/linkedin-search/cli"
+bun install
+Set-Location "..\..\..\.."
 ```
 
 - Bash / zsh / Git Bash:
 ```bash
-for tool in jobbank-search jobdanmark-search jobindex-search jobnet-search linkedin-search; do
-  cd .agents/skills/$tool/cli && bun install && cd ../../../..
-done
+bun --version
+cd .agents/skills/linkedin-search/cli && bun install && cd ../../../..
 ```
 
 For `linkedin-search` the install is optional: it has zero runtime dependencies and runs with plain `bun`; `bun install` only pulls TypeScript dev types.
@@ -108,6 +105,7 @@ Then run the onboarding:
 
 ```
 /setup
+/setup --section search
 ```
 
 Claude will offer three paths:
@@ -117,6 +115,16 @@ Claude will offer three paths:
 - **Path C (interview mode):** Answer structured interview questions section by section.
 
 All three paths produce the same result: fully populated profile files.
+
+Run `/setup --section search` before the first scrape so your target roles, markets, languages, relocation preferences, and contract deal-breakers are reflected in `search-queries.md`.
+
+If you want to start from a CV first, attach or paste it and ask:
+
+```
+Audit and improve this CV for my target roles
+```
+
+The assistant will audit the CV, compare it with current CV/ATS guidance, generate an improved master CV, and then use the accepted facts to drive scraping.
 
 ### What gets populated
 
