@@ -51,9 +51,47 @@ For each search:
 
 For each promising result from Step 1:
 - Use `WebFetch` to retrieve the job posting page
-- Extract: **job title**, **company**, **market** (Croatia, Netherlands, Remote EU, Relocation), **location**, **workplace model**, **remote-country eligibility**, **language requirements**, **work authorization/visa notes**, **posting date** (or "recent"), **URL**, **key requirements** (brief), **application deadline** (if listed)
+- Normalize every posting to the schema below. Use `tools/job_scraper_utils.py` when you have raw LinkedIn detail JSON or fetched portal text.
 - Skip if the URL or company+title combo already exists in `seen_jobs.json`
 - Skip if the company+role already appears in `job_search_tracker.csv`
+
+#### Normalized Job Schema
+
+Use these fields for every source, even when the value is `"unknown"`:
+
+```json
+{
+  "title": "",
+  "company": "",
+  "source": "linkedin|euremotejobs|relocate.me|iamexpat|englishjobsearch|remote.com|remotive|other",
+  "url": "",
+  "market": "Croatia|Netherlands|Remote EU|Relocation|Other",
+  "location": "",
+  "workplace_model": "onsite|hybrid|remote|unknown",
+  "remote_country_eligibility": "",
+  "language_requirements": [],
+  "work_authorization": "",
+  "contract_type": "employee|temporary|internship|contractor|freelance|part-time|unknown",
+  "seniority": "",
+  "posting_date": "",
+  "deadline": "",
+  "required_skills": [],
+  "nice_to_have_skills": [],
+  "fit": "high|medium|low",
+  "fit_score": 0,
+  "status": "new|skipped|evaluated|ranked|expired",
+  "flags": [],
+  "blockers": []
+}
+```
+
+#### Portal Parsers
+
+- **LinkedIn**: prefer the bundled `linkedin-search` CLI `detail --format json`; pass the JSON through `normalize_job`.
+- **EU Remote Jobs**: fetch the detail page, then parse title, company, location, job type, posting age, tags, and "Applications have closed" from the page text.
+- **Relocate.me**: fetch the job page or category page; parse title, company, city/country, relocation/visa text, seniority words, and whether the listing is a real job or partner/paywalled aggregate.
+- **IamExpat / EnglishJobSearch / Undutchables**: fetch detail pages only when the search snippet already matches title + Netherlands + language; parse required languages and current-residence requirements before scoring.
+- **Other remote boards**: fetch detail pages only if the snippet says Europe, EU, EMEA, EEA, Netherlands, Croatia, or worldwide employee employment.
 
 ### Step 3: Quick Fit Assessment
 
@@ -63,7 +101,21 @@ For each new job, do a rapid fit check (NOT the full evaluation from `04-job-eva
 - **Medium match**: Role is adjacent to your experience
 - **Low match**: Role requires significant skills you lack
 
-Also flag language, relocation, remote-country eligibility, and work-authorization uncertainty instead of hiding it inside the fit label.
+Score the normalized job before presenting it:
+- Role/title match to target roles: up to 30 points
+- Market/logistics match: up to 20 points
+- Supported skills match: up to 25 points
+- Seniority fit: up to 15 points
+- Fresh/open posting: up to 10 points
+
+Hard blockers set `status: "skipped"` unless the user explicitly asks to review them:
+- Contractor/freelance-only when the profile requires employee roles
+- Required language not in the candidate profile
+- Remote role that is not eligible for the configured country/region
+- Current-residence requirement the candidate does not meet
+- Expired/closed listing
+
+Fit labels: high = 70+ and no blockers, medium = 45-69 and no hard blockers, low = everything else. Always flag language, relocation, remote-country eligibility, and work-authorization uncertainty instead of hiding it inside the fit label.
 
 ### Step 4: Deduplicate & Store
 
@@ -74,9 +126,13 @@ Also flag language, relocation, remote-country eligibility, and work-authorizati
     "<url_or_company_title_key>": {
       "title": "...",
       "company": "...",
+      "source": "...",
       "url": "...",
+      "market": "...",
+      "location": "...",
       "first_seen": "YYYY-MM-DD",
       "fit": "high/medium/low",
+      "fit_score": 0,
       "status": "new/skipped/evaluated/ranked/expired"
     }
   }
@@ -123,6 +179,7 @@ If the user decides to apply to any job, add a row to `job_search_tracker.csv`.
 2. **Respect deduplication.** Always check seen_jobs.json AND job_search_tracker.csv before presenting.
 3. **Focus on configured target markets.** Keep Croatia, Netherlands, and remote EU roles; skip other countries unless explicitly requested.
 4. **Only open positions.** Skip postings with expired deadlines or those marked as closed.
-5. **Be efficient with WebFetch.** Don't fetch every search result - use titles and snippets to pre-filter before fetching.
-6. **Parallel searches.** Use the Agent tool or parallel WebSearch calls to speed up the search phase.
-7. **Do not assume language, visa, or remote eligibility.** If Dutch, Croatian, work authorization, relocation, remote-country eligibility, or contract setup is unclear, flag it.
+5. **Remote filtering is strict.** Do not present a generic "Remote" role unless the posting explicitly allows the configured country/region (for example EU, EEA, EMEA, Europe, Croatia, Netherlands, or worldwide employee employment). Generic LinkedIn `Remote` searches are noisy; prefer remote-specific boards plus region terms.
+6. **Be efficient with WebFetch.** Don't fetch every search result - use titles and snippets to pre-filter before fetching.
+7. **Parallel searches.** Use the Agent tool or parallel WebSearch calls to speed up the search phase.
+8. **Do not assume language, visa, or remote eligibility.** If Dutch, Croatian, work authorization, relocation, remote-country eligibility, or contract setup is unclear, flag it.

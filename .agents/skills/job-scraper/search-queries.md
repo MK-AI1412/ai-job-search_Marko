@@ -141,26 +141,32 @@ site:jobs.workable.com "remote" "[YOUR_PRIMARY_JOB_TITLE]" Netherlands
 
 ### Priority 5: Remote EU, Relocation, and Visa-Friendly
 
-These sources are noisier, so fetch fewer results and verify country eligibility before ranking.
+These sources are noisier, so fetch fewer results and verify country eligibility before ranking. Prefer queries that include the configured country or region. Do not keep a result just because the title says "remote"; the detail page must allow the candidate's country/region or worldwide employee work.
 
 ```
-site:relocate.me "[YOUR_PRIMARY_JOB_TITLE]" Netherlands
-site:relocate.me "[YOUR_PRIMARY_JOB_TITLE]" "relocation"
-site:landing.jobs "[YOUR_PRIMARY_JOB_TITLE]" "remote"
-site:landing.jobs "[YOUR_PRIMARY_JOB_TITLE]" Netherlands
-site:jaabz.com "[YOUR_PRIMARY_JOB_TITLE]" "visa sponsorship"
-site:jaabz.com "[YOUR_PRIMARY_JOB_TITLE]" "relocation"
-site:remote.com/jobs "[YOUR_PRIMARY_JOB_TITLE]" "Europe only"
-site:remote.com/jobs "[YOUR_PRIMARY_JOB_TITLE]" Netherlands
-site:euremotejobs.com "[YOUR_PRIMARY_JOB_TITLE]"
-site:remotive.com/remote-europe-jobs "[YOUR_PRIMARY_JOB_TITLE]"
-site:remoteok.com "[YOUR_PRIMARY_JOB_TITLE]" Europe
-site:weworkremotely.com "[YOUR_PRIMARY_JOB_TITLE]" Europe
-site:workingnomads.com/jobs "[YOUR_PRIMARY_JOB_TITLE]" Europe
-site:himalayas.app/jobs "[YOUR_PRIMARY_JOB_TITLE]" Croatia
-site:himalayas.app/jobs "[YOUR_PRIMARY_JOB_TITLE]" Netherlands
-site:wearedistributed.org "[YOUR_PRIMARY_JOB_TITLE]" "Remote Europe"
+site:relocate.me/international-jobs "[YOUR_PRIMARY_JOB_TITLE]" Netherlands
+site:relocate.me/international-jobs "[YOUR_PRIMARY_JOB_TITLE]" "relocation"
+site:relocate.me/international-jobs "[YOUR_ADJACENT_TITLE_1]" Netherlands
+site:landing.jobs "[YOUR_PRIMARY_JOB_TITLE]" ("Europe" OR "EU" OR "Netherlands")
+site:landing.jobs "[YOUR_ADJACENT_TITLE_1]" ("Europe" OR "EU" OR "Netherlands")
+site:jaabz.com "[YOUR_PRIMARY_JOB_TITLE]" ("visa sponsorship" OR "relocation")
+site:remote.com/jobs "[YOUR_PRIMARY_JOB_TITLE]" ("Europe only" OR "EMEA" OR "Netherlands")
+site:remote.com/jobs "[YOUR_ADJACENT_TITLE_1]" ("Europe only" OR "EMEA" OR "Netherlands")
+site:euremotejobs.com/job "[YOUR_PRIMARY_JOB_TITLE]" ("Europe" OR "EMEA" OR "Netherlands" OR "Croatia")
+site:euremotejobs.com/job "[YOUR_ADJACENT_TITLE_1]" ("Europe" OR "EMEA" OR "Netherlands" OR "Croatia")
+site:remotive.com/remote-jobs "[YOUR_PRIMARY_JOB_TITLE]" ("Europe" OR "European timezones" OR "EMEA")
+site:remotive.com/remote-jobs "[YOUR_ADJACENT_TITLE_1]" ("Europe" OR "European timezones" OR "EMEA")
+site:remoteok.com "[YOUR_PRIMARY_JOB_TITLE]" ("Europe" OR "EU" OR "EMEA")
+site:weworkremotely.com "[YOUR_PRIMARY_JOB_TITLE]" ("Europe" OR "EMEA")
+site:workingnomads.com/jobs "[YOUR_PRIMARY_JOB_TITLE]" ("Europe" OR "EMEA")
+site:himalayas.app/jobs "[YOUR_PRIMARY_JOB_TITLE]" ("Europe" OR "Netherlands" OR "Croatia")
+site:wearedistributed.org "[YOUR_PRIMARY_JOB_TITLE]" ("Remote Europe" OR "EMEA")
 ```
+
+Remote keep/drop rules:
+- Keep: explicit Croatia, Netherlands, EU, EEA, EMEA, Europe, European time zones, or worldwide employee employment.
+- Flag: worldwide roles with unclear contract/tax setup.
+- Drop: country lists that exclude the candidate's configured country, contractor-only, freelance-only, US-only, India-only, LATAM-only, APAC-only, Philippines-only, or "must already be based in X" outside the configured profile.
 
 ### Priority 6: Target Companies
 
